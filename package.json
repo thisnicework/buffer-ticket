@@ -1,0 +1,13 @@
+{
+  "name": "buffer-ticket",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BUFFER 버퍼 티켓 예매 사이트",
+  "main": "server.js",
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning server.js"
+  },
+  "engines": {
+    "node": ">=22.5"
+  }
+}
