@@ -15,6 +15,7 @@ const BOOK_RATE_MAX = Number(process.env.BOOK_RATE_MAX || 30); // IP당 10분 �
 const TICKET_PRICE = Number(process.env.TICKET_PRICE || 0); // 표시용 금액(원). 결제는 모의 처리라 실제 청구는 없음
 const CAP = 35; //회차당 온라인 예매석 (총 40석 중 유보석 5석 제외)
 const PUBLIC_DIR = path.join(__dirname, "public");
+const ASSETS_DIR = path.join(__dirname, "assets"); // 디자인 원본을 /assets/ 로 그대로 서빙
 
 const SHOWS = [
   { id: "A", date: "11.14", dow: "SAT", dowKo: "토", time: "3PM" },
@@ -238,13 +239,15 @@ function serveStatic(req, res, url) {
   let p = decodeURIComponent(url.pathname);
   if (p === "/") p = "/index.html";
   if (p === "/admin") p = "/admin.html";
-  const file = path.normalize(path.join(PUBLIC_DIR, p));
-  if (!file.startsWith(PUBLIC_DIR + path.sep)) return send(res, 403, "Forbidden");
+  const isAsset = p.startsWith("/assets/");
+  const base = isAsset ? ASSETS_DIR : PUBLIC_DIR;
+  const file = path.normalize(path.join(base, isAsset ? p.slice("/assets".length) : p));
+  if (!file.startsWith(base + path.sep)) return send(res, 403, "Forbidden");
   fs.readFile(file, (err, data) => {
     if (err) return send(res, 404, "Not found");
     res.writeHead(200, {
       "Content-Type": TYPES[path.extname(file)] || "application/octet-stream",
-      "Cache-Control": "no-cache",
+      "Cache-Control": isAsset ? "public, max-age=3600" : "no-cache",
     });
     res.end(data);
   });

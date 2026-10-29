@@ -46,8 +46,8 @@
     var box = $("profiles");
     for (var i = 1; i <= 10; i++) {
       var f = el("figure", i === 10 ? "wide" : ""), im = el("img");
-      im.src = "/img/profile-" + i + ".jpg"; im.alt = i === 10 ? "BUFFER 버퍼 퍼포머 단체 프로필" : "BUFFER 버퍼 퍼포머 프로필 " + i;
-      im.loading = "lazy"; im.width = i === 10 ? 1600 : 900; im.height = i === 10 ? 856 : 1125;
+      im.src = "/assets/profile/Buffer_Profile_v1027-" + i + ".jpg"; im.alt = i === 10 ? "BUFFER 버퍼 퍼포머 단체 프로필" : "BUFFER 버퍼 퍼포머 프로필 " + i;
+      im.loading = "lazy"; im.width = i === 10 ? 14408 : 4800; im.height = i === 10 ? 7707 : 6000;
       f.appendChild(im); box.appendChild(f);
     }
   })();

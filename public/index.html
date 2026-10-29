@@ -48,7 +48,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 /* hero */
 .hero{padding-top:20px;padding-bottom:0}
 .title{margin:0;line-height:0}
-.logo{display:block;width:min(100%,520px);height:auto}
+.logo{display:block;position:relative;overflow:hidden;width:min(100%,520px);aspect-ratio:4977/2934}
+.logo img{position:absolute;width:141.9%;max-width:none;height:auto;left:-18.18%;top:-28.9%}
 .sub{display:flex;flex-wrap:wrap;gap:6px 28px;margin-top:22px;font-family:var(--f-mono);font-size:13px}
 .tempo{position:relative;height:200px;margin-top:28px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-end;padding-inline:2px}
 .ln{position:relative;width:1px;background:var(--ink);height:var(--h)}
@@ -123,6 +124,7 @@ footer{padding-block:28px 40px;border-top:1px solid var(--ink);font-family:var(-
 /* poster / profile / teaser */
 .posters{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:18px}
 .posters img,.profiles img{display:block;width:100%;height:auto;background:var(--line)}
+.profiles img{aspect-ratio:4/5;object-fit:cover}.profiles .wide img{aspect-ratio:14408/7707}
 .posters figure,.profiles figure{margin:0}
 .teaser{margin-top:22px;aspect-ratio:16/5;border:1px dashed var(--ring);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-family:var(--f-mono)}
 .teaser b{font-weight:500;letter-spacing:.1em;font-size:14px}
@@ -141,7 +143,7 @@ footer{padding-block:28px 40px;border-top:1px solid var(--ink);font-family:var(-
   <div class="bar"><b>BUFFER 버퍼</b><span>TICKET / 2026</span></div>
 
   <section class="zone hero" aria-labelledby="ttl">
-    <h1 class="title" id="ttl"><span class="sr">BUFFER 버퍼</span><picture><source srcset="/img/logo-date-white.png" media="(prefers-color-scheme:dark)"><img class="logo" src="/img/logo-date-black.png" alt="" width="800" height="472"></picture></h1>
+    <h1 class="title" id="ttl"><span class="sr">BUFFER 버퍼</span><span class="logo"><picture><source srcset="/assets/design/LOGO/White/BUFFER%20Logo_Date_White.png" media="(prefers-color-scheme:dark)"><img src="/assets/design/LOGO/Black/BUFFER%20Logo_Date.png" alt="" width="7063" height="5008"></picture></span></h1>
     <div class="sub"><span>2026.11.14 SAT — 11.15 SUN</span><span>총 4회차</span><span>자유석 · 1인 1매</span></div>
     <div class="tempo" id="tempo" aria-hidden="true"></div>
   </section>
@@ -166,8 +168,8 @@ footer{padding-block:28px 40px;border-top:1px solid var(--ink);font-family:var(-
   <section class="zone" aria-labelledby="po">
     <div class="label" id="po">공연 소개</div>
     <div class="posters">
-      <figure><img src="/img/poster-a.jpg" alt="BUFFER 버퍼 포스터 A — 흑백 사각형 조각이 흩어진 이미지" loading="lazy" width="1000" height="1333"></figure>
-      <figure><img src="/img/poster-b.jpg" alt="BUFFER 버퍼 포스터 B — 2026.11.14–15, 3PM/7PM, Please wait at Space Padong" loading="lazy" width="1000" height="1333"></figure>
+      <figure><img src="/assets/design/POSTER/%28%EC%97%85%EB%A1%9C%EB%93%9C%EC%9A%A9%29%20BUFFER%20Poster_A.jpg" alt="BUFFER 버퍼 포스터 A — 흑백 사각형 조각이 흩어진 이미지" loading="lazy" width="1000" height="1333"></figure>
+      <figure><img src="/assets/design/POSTER/%28%EC%97%85%EB%A1%9C%EB%93%9C%EC%9A%A9%29%20BUFFER%20Poster_B.jpg" alt="BUFFER 버퍼 포스터 B — 2026.11.14–15, 3PM/7PM, Please wait at Space Padong" loading="lazy" width="1000" height="1333"></figure>
     </div>
     <p class="notice"><strong>BUFFER 버퍼</strong><br>Space Padong · 2026.11.14(토)–15(일) · 3PM / 7PM<br>Presented by Team Sfumato</p>
     <div class="teaser" id="teaser" role="img" aria-label="티저 영상 준비 중"><span class="label">TEASER</span><b>준비 중 · COMING SOON</b></div>
