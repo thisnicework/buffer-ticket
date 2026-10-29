@@ -99,6 +99,17 @@
       sq.addEventListener("animationiteration", function (e) { place(e.target, false); });  // 화면 위로 돌아갈 때마다 새 위치·크기
       box.appendChild(sq);
     }
+    // 스크롤을 내릴수록 서서히 사라짐: 맨 위 1 → 한 화면 아래 0. 다 사라지면 애니메이션도 멈춤
+    var ticking = false;
+    function fade() {
+      ticking = false;
+      var o = Math.max(0, Math.min(1, 1 - scrollY / (innerHeight * 0.9)));
+      box.style.opacity = o.toFixed(3);
+      box.classList.toggle("off", o === 0);
+    }
+    addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(fade); } }, { passive: true });
+    addEventListener("resize", fade);
+    fade();
   })();
 
   /* ---- countdown ---- */

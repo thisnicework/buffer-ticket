@@ -164,6 +164,7 @@ figure{margin:0}
 #fall{position:fixed;inset:0;z-index:5;pointer-events:none;overflow:hidden;mix-blend-mode:difference}
 #fall i{position:absolute;top:0;left:var(--x);width:var(--s);height:var(--s);background:#fff;will-change:transform;animation:drop var(--d) linear var(--dl) infinite}
 @keyframes drop{from{transform:translate3d(0,-40vh,0) rotate(var(--r0))}to{transform:translate3d(var(--dx),115vh,0) rotate(var(--r1))}}
+#fall.off{visibility:hidden}#fall.off i{animation-play-state:paused}
 @media (prefers-reduced-motion:reduce){#fall i{animation-play-state:paused}}
 
 /* lightbox */
