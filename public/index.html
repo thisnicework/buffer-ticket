@@ -52,15 +52,12 @@ button{font:inherit;color:inherit;cursor:pointer}
 @media (max-width:700px){.bar nav a:not(.cta){display:none}}
 
 /* hero */
-.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:28px 48px;align-items:center;padding-top:28px}
+.hero{padding-top:36px;padding-bottom:12px}
 .crop{display:block;position:relative;overflow:hidden;width:100%;aspect-ratio:var(--ar)}
 .crop img{position:absolute;width:var(--w);max-width:none;height:auto;left:var(--l);top:var(--t)}
-.crop.logo{max-width:640px}.crop.base{max-width:420px}.crop.sfu{max-width:360px}
+.crop.logo{max-width:860px}.crop.base{max-width:420px}.crop.sfu{max-width:360px}
 .sub{display:flex;flex-wrap:wrap;gap:6px 28px;margin-top:22px;font-family:var(--f-mono);font-size:13px}
 .hero .go{margin-top:24px;display:inline-block;text-decoration:none}
-.poster-main{margin:0}
-.poster-main img{display:block;width:100%;height:auto}
-@media (max-width:860px){.hero{grid-template-columns:1fr}.poster-main{max-width:420px}}
 .tempo{position:relative;height:160px;margin-top:8px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-end;padding-inline:2px}
 .ln{position:relative;width:1px;background:var(--ink);height:var(--h)}
 .ln i{position:absolute;left:-3px;top:0;width:7px;height:7px;border-radius:50%;background:var(--ink);animation:beat var(--t) cubic-bezier(.6,0,.4,1) infinite alternate}
@@ -140,12 +137,11 @@ footer{padding-block:28px 40px;border-top:1px solid var(--ink);font-family:var(-
 figure{margin:0}
 .zoom{display:block;width:100%;padding:0;border:0;background:var(--line);cursor:zoom-in;line-height:0}
 .zoom img{display:block;width:100%;height:auto}
-.posters{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:18px}
 .cap{margin-top:8px;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;color:var(--mute)}
 .intro{display:grid;grid-template-columns:1fr 1fr 1fr;align-items:end;gap:12px 48px;margin-top:22px}
 .intro p{margin:0;max-width:60ch;color:var(--mute);font-size:14px}
 .intro p b{color:var(--ink);font-weight:600}
-@media (max-width:700px){.posters{grid-template-columns:1fr}.intro{grid-template-columns:1fr}}
+@media (max-width:700px){.intro{grid-template-columns:1fr}}
 .film{margin-top:18px;display:grid;grid-template-columns:2fr 1fr;gap:16px}
 .film video{display:block;width:100%;height:auto;aspect-ratio:1080/566;background:#f7f7f7;border:1px solid var(--line)}
 .teaser{aspect-ratio:auto;min-height:140px;border:1px dashed var(--ring);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-family:var(--f-mono);text-align:center}
@@ -164,11 +160,11 @@ figure{margin:0}
 .paybox{margin-top:16px;border:1px solid var(--line);padding:14px 16px;font-size:14px;display:grid;gap:4px}
 .paybox b{font-family:var(--f-mono);font-size:22px;font-weight:500}
 
-/* falling boxes: 포스터 A 큐브 구조로 새로 생성한 상자들이 화면 전체로 떨어짐(app.js). difference 블렌드라 겹친 글자는 반전되어 읽힘 */
+/* falling boxes: 검은 정사각형들이 화면 전체로 떨어짐(app.js). difference 블렌드라 겹친 글자는 반전되어 읽힘 */
 #fall{position:fixed;inset:0;z-index:5;pointer-events:none;overflow:hidden;mix-blend-mode:difference}
-#fall img{position:absolute;top:0;left:var(--x);width:var(--s);height:var(--s);will-change:transform;animation:drop var(--d) linear var(--dl) infinite}
+#fall i{position:absolute;top:0;left:var(--x);width:var(--s);height:var(--s);background:#fff;will-change:transform;animation:drop var(--d) linear var(--dl) infinite}
 @keyframes drop{from{transform:translate3d(0,-40vh,0) rotate(var(--r0))}to{transform:translate3d(var(--dx),115vh,0) rotate(var(--r1))}}
-@media (prefers-reduced-motion:reduce){#fall img{animation-play-state:paused}}
+@media (prefers-reduced-motion:reduce){#fall i{animation-play-state:paused}}
 
 /* lightbox */
 .lb{position:fixed;inset:0;z-index:30;background:color-mix(in srgb,var(--paper) 94%,transparent);display:flex;align-items:center;justify-content:center;padding:16px}
@@ -193,7 +189,6 @@ figure{margin:0}
       <div class="sub"><span>총 4회차</span><span>자유석 · 1인 1매</span></div>
       <a class="btn solid go" href="#sh">예매하기 ↓</a>
     </div>
-    <figure class="poster-main"><button class="zoom" type="button" data-zoom="1" aria-label="포스터 A 크게 보기"><img src="/assets/design/POSTER/BUFFER%20Poster_A.png" alt="BUFFER 버퍼 포스터 A — 흑백 사각형 조각이 흩어진 이미지" width="4961" height="7016"></button></figure>
   </section>
   <div class="tempo" id="tempo" aria-hidden="true"></div>
 </div>
@@ -223,10 +218,6 @@ figure{margin:0}
 
   <section class="zone" id="po" aria-labelledby="pot">
     <div class="label" id="pot">공연 소개</div>
-    <div class="posters">
-      <figure><button class="zoom" type="button" data-zoom="1" aria-label="포스터 A 크게 보기"><img src="/assets/design/POSTER/BUFFER%20Poster_A.png" alt="BUFFER 버퍼 포스터 A — 흑백 사각형 조각이 흩어진 이미지" loading="lazy" decoding="async" width="4961" height="7016"></button><figcaption class="cap">POSTER A</figcaption></figure>
-      <figure><button class="zoom" type="button" data-zoom="0" aria-label="포스터 B 크게 보기"><img src="/assets/design/POSTER/BUFFER%20Poster_B.png" alt="BUFFER 버퍼 포스터 B" loading="lazy" decoding="async" width="4961" height="7016"></button><figcaption class="cap">POSTER B</figcaption></figure>
-    </div>
     <div class="intro">
       <div><span class="crop base" style="--ar:4839/2934;--w:145.96%;--l:-18.70%;--t:-40.63%"><picture><source srcset="/assets/design/LOGO/White/BUFFER%20Logo_White.png" media="(prefers-color-scheme:dark)"><img src="/assets/design/LOGO/Black/BUFFER%20Logo.png" alt="BUFFER 버퍼" width="7063" height="5008"></picture></span></div>
       <p><b>BUFFER 버퍼</b><br>Space Padong · 2026.11.14(토)–15(일) · 3PM / 7PM<br>Presented by Team Sfumato</p>

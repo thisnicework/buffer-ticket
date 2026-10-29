@@ -43,11 +43,7 @@
 
   /* ---- gallery + lightbox ---- */
   var PROFILE = function (i) { return "/assets/profile/Buffer_Profile_v1027-" + i + ".jpg"; };
-  var POSTER = "/assets/design/POSTER/BUFFER%20Poster_";
-  var GALLERY = [
-    { src: POSTER + "B.png", alt: "BUFFER 버퍼 포스터 B" },
-    { src: POSTER + "A.png", alt: "BUFFER 버퍼 포스터 A" }
-  ];
+  var GALLERY = [];
   var lb = null;
   function zoomBtn(src, alt, w, h, idx) {
     var b = el("button", "zoom"); b.type = "button"; b.setAttribute("aria-label", alt + " 크게 보기");
@@ -64,7 +60,6 @@
     GALLERY.push({ src: PROFILE(10), alt: "BUFFER 버퍼 퍼포머 단체 프로필" });
     var g = $("group"); g.appendChild(zoomBtn(PROFILE(10), "BUFFER 버퍼 퍼포머 단체 프로필", 14408, 7707, GALLERY.length - 1));
     g.appendChild(el("figcaption", "cap", "PERFORMERS · 9"));
-    document.querySelectorAll("[data-zoom]").forEach(function (b) { b.addEventListener("click", function () { openLb(Number(b.getAttribute("data-zoom"))); }); });
   })();
   function openLb(i) { lb = { i: i, last: document.activeElement }; renderLb(); }
   function closeLb() { var l = lb; lb = null; $("lightbox").textContent = ""; if (l && l.last && l.last.focus) l.last.focus(); }
@@ -85,81 +80,24 @@
   });
 
   /* ---- falling boxes ----
-     포스터 A 큐브의 구조를 규칙으로 옮겨 매번 새로 생성:
-     회전된 검은 정사각형 + 변과 평행한 흰 "트랙"(점·구슬·대시·링·큰 점·막대)이
-     평행 묶음/직교 격자/끊긴 안쪽 테두리로 배치됨. 무늬 없는 상자도 섞임.
-     #fall 레이어가 difference 블렌드라 여기서는 반대로(흰 몸체, 검은 무늬) 그림 */
+     검은 정사각형이 크기·속도·회전을 달리해 떨어짐.
+     #fall 레이어가 difference 블렌드라 흰색으로 그리면 검게 보이고, 겹친 글자는 반전되어 읽힘 */
   (function () {
     function r(a, b) { return a + Math.random() * (b - a); }
-    function ri(a, b) { return Math.floor(r(a, b + 1)); }
-    function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
-    var STYLES = ["dots", "dots", "beads", "dash", "dash", "ring", "big", "bar"];
-    // (x1,y1)→(x2,y2) 축 방향 트랙 하나를 SVG 조각으로
-    function track(x1, y1, x2, y2, st) {
-      var h = y1 === y2, len = Math.abs(h ? x2 - x1 : y2 - y1), sx = Math.sign(x2 - x1), sy = Math.sign(y2 - y1), out = "";
-      function at(t) { return [x1 + sx * t, y1 + sy * t]; }
-      if (st === "bar") {
-        var w = r(3.5, 7), x = Math.min(x1, x2), y = Math.min(y1, y2);
-        return h ? '<rect x="' + x + '" y="' + (y - w / 2) + '" width="' + len + '" height="' + w + '"/>' : '<rect x="' + (x - w / 2) + '" y="' + y + '" width="' + w + '" height="' + len + '"/>';
-      }
-      if (st === "dash") {
-        var t = 0, th = r(1.8, 2.8);
-        while (t < len) {
-          var l = Math.min(r(1.2, 5), len - t), p = at(t), q = at(t + l), w2 = th * r(0.8, 1.25);
-          out += h ? '<rect x="' + Math.min(p[0], q[0]) + '" y="' + (p[1] - w2 / 2) + '" width="' + l + '" height="' + w2 + '"/>' : '<rect x="' + (p[0] - w2 / 2) + '" y="' + Math.min(p[1], q[1]) + '" width="' + w2 + '" height="' + l + '"/>';
-          t += l + r(0.8, 2.2);
-        }
-        return out;
-      }
-      var cfg = { dots: [r(0.9, 1.4), r(3.4, 4.8)], beads: [r(1.7, 2.6), 0], ring: [r(1.3, 1.8), r(3.6, 4.4)], big: [r(2, 3), r(5.5, 7)] }[st];
-      var rad = cfg[0], step = st === "beads" ? rad * 1.15 : cfg[1];
-      for (var k = 0; k * step <= len; k++) {
-        var c = at(k * step), rr = st === "beads" ? rad * (k % 2 ? 0.78 : 1) : rad;
-        if (st === "ring" && Math.random() < 0.55) out += '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="' + rr + '" fill="none" stroke="#000" stroke-width="' + (rr * 0.45) + '"/>';
-        else out += '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="' + rr + '"/>';
-      }
-      return out;
-    }
-    function lo() { return r(6, 40); }
-    function hi() { return r(60, 94); }
-    function makeBox() {
-      var g = "", kind = pick(["rows", "rows", "grid", "grid", "grid", "frame", "frame", "plaid", "plaid", "sparse", "plain"]), st = pick(STYLES);
-      if (kind === "rows" || kind === "grid") {
-        var n = ri(3, 7), gap = r(6.5, 12), y0 = r(10, 90 - gap * (n - 1));
-        for (var i = 0; i < n; i++) { var y = y0 + gap * i; g += track(Math.random() < 0.5 ? 0 : lo(), y, Math.random() < 0.5 ? 100 : hi(), y, st); }
-        if (kind === "grid") {
-          var st2 = Math.random() < 0.6 ? st : pick(STYLES), m = ri(1, 4), gx = r(7, 15), x0 = r(10, 90 - gx * (m - 1));
-          for (var j = 0; j < m; j++) { var x = x0 + gx * j; g += track(x, Math.random() < 0.5 ? 0 : lo(), x, Math.random() < 0.5 ? 100 : hi(), st2); }
-        }
-      } else if (kind === "frame") {  // 끊긴 안쪽 테두리(ㄷ/ㄴ자) + 안쪽 짧은 선
-        var a = r(10, 25), b = r(60, 88), sf = pick(["dots", "dash", "big", "beads"]), sides = [[a, a, b, a], [b, a, b, b], [b, b, a, b], [a, b, a, a]], skip = ri(0, 3);
-        for (var s2 = 0; s2 < 4; s2++) if (s2 !== skip) g += track(sides[s2][0], sides[s2][1], sides[s2][2], sides[s2][3], sf);
-        var iy = r(a + 8, b - 8); g += track(a + r(6, 14), iy, r(a + 20, b), iy, sf);
-      } else if (kind === "plaid") {  // 굵은 막대 격자가 상자 일부에 몰림
-        var cx = r(20, 60), cy = r(20, 60), sz = r(30, 45);
-        for (var p = 0, np = ri(2, 4); p < np; p++) { var py = cy + r(0, sz); g += track(cx - r(0, 10), py, cx + sz + r(0, 15), py, "bar"); }
-        for (var q = 0, nq = ri(2, 4); q < nq; q++) { var px = cx + r(0, sz); g += track(px, cy - r(0, 10), px, cy + sz + r(0, 15), "bar"); }
-      } else if (kind === "sparse") {
-        var y1 = r(15, 85); g += track(0, y1, r(40, 100), y1, st);
-        if (Math.random() < 0.6) { var x1 = r(15, 85); g += track(x1, r(0, 40), x1, 100, st); }
-      }
-      return "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#fff"/><g fill="#000">' + g + "</g></svg>");
-    }
     var box = $("fall"), small = innerWidth < 700, n = small ? 7 : 12;
-    function place(im, first) {
+    function place(sq, first) {
       var d = r(16, 30), r0 = r(-45, 45);
-      im.src = makeBox();
-      im.style.setProperty("--x", r(-6, 94).toFixed(1) + "%");
-      im.style.setProperty("--s", Math.round(small ? r(48, 120) : r(70, 210)) + "px");
-      im.style.setProperty("--dx", Math.round(r(-60, 60)) + "px");
-      im.style.setProperty("--r0", r0.toFixed(0) + "deg");
-      im.style.setProperty("--r1", (r0 + r(-160, 160)).toFixed(0) + "deg");
-      if (first) { im.style.setProperty("--d", d.toFixed(1) + "s"); im.style.setProperty("--dl", (-r(0, d)).toFixed(1) + "s"); }  // 처음부터 화면 곳곳에 흩어지도록 음수 지연
+      sq.style.setProperty("--x", r(-6, 94).toFixed(1) + "%");
+      sq.style.setProperty("--s", Math.round(small ? r(48, 120) : r(70, 210)) + "px");
+      sq.style.setProperty("--dx", Math.round(r(-60, 60)) + "px");
+      sq.style.setProperty("--r0", r0.toFixed(0) + "deg");
+      sq.style.setProperty("--r1", (r0 + r(-160, 160)).toFixed(0) + "deg");
+      if (first) { sq.style.setProperty("--d", d.toFixed(1) + "s"); sq.style.setProperty("--dl", (-r(0, d)).toFixed(1) + "s"); }  // 처음부터 화면 곳곳에 흩어지도록 음수 지연
     }
     for (var i = 0; i < n; i++) {
-      var im = el("img"); im.alt = ""; place(im, true);
-      im.addEventListener("animationiteration", function (e) { place(e.target, false); });  // 화면 위로 돌아갈 때마다 새 상자
-      box.appendChild(im);
+      var sq = el("i"); place(sq, true);
+      sq.addEventListener("animationiteration", function (e) { place(e.target, false); });  // 화면 위로 돌아갈 때마다 새 위치·크기
+      box.appendChild(sq);
     }
   })();
 
