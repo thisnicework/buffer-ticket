@@ -164,6 +164,12 @@ figure{margin:0}
 .paybox{margin-top:16px;border:1px solid var(--line);padding:14px 16px;font-size:14px;display:grid;gap:4px}
 .paybox b{font-family:var(--f-mono);font-size:22px;font-weight:500}
 
+/* falling boxes: 포스터 A의 검은 상자들이 화면 전체로 떨어짐. difference 블렌드라 겹친 글자는 반전되어 읽힘 */
+#fall{position:fixed;inset:0;z-index:5;pointer-events:none;overflow:hidden;mix-blend-mode:difference}
+#fall img{position:absolute;top:0;left:var(--x);width:var(--s);height:auto;will-change:transform;animation:drop var(--d) linear var(--dl) infinite}
+@keyframes drop{from{transform:translate3d(0,-40vh,0) rotate(var(--r0))}to{transform:translate3d(var(--dx),115vh,0) rotate(var(--r1))}}
+@media (prefers-reduced-motion:reduce){#fall img{animation-play-state:paused}}
+
 /* lightbox */
 .lb{position:fixed;inset:0;z-index:30;background:color-mix(in srgb,var(--paper) 94%,transparent);display:flex;align-items:center;justify-content:center;padding:16px}
 .lb img{max-width:100%;max-height:90vh;object-fit:contain;display:block;background:var(--line)}
@@ -279,6 +285,7 @@ figure{margin:0}
 <div id="live" class="sr" aria-live="polite" style="position:absolute;left:-9999px"></div>
 <div id="overlay"></div>
 <div id="lightbox"></div>
+<div id="fall" aria-hidden="true"></div>
 
 <script src="/app.js"></script>
 </body>

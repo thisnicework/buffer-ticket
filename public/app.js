@@ -84,6 +84,24 @@
     if (e.key === "Escape") closeLb(); else if (e.key === "ArrowLeft") stepLb(-1); else if (e.key === "ArrowRight") stepLb(1);
   });
 
+  /* ---- falling boxes ---- */
+  (function () {
+    var box = $("fall"), small = innerWidth < 700, n = small ? 7 : 12;
+    function r(a, b) { return a + Math.random() * (b - a); }
+    for (var i = 0; i < n; i++) {
+      var im = el("img"); im.src = "/fall/sq-" + (i % 9) + ".png"; im.alt = ""; im.decoding = "async";
+      var d = r(16, 30), r0 = r(-40, 40);
+      im.style.setProperty("--x", r(-6, 94).toFixed(1) + "%");
+      im.style.setProperty("--s", Math.round(small ? r(48, 120) : r(70, 210)) + "px");
+      im.style.setProperty("--d", d.toFixed(1) + "s");
+      im.style.setProperty("--dl", (-r(0, d)).toFixed(1) + "s");  // 처음부터 화면 곳곳에 흩어져 있도록 음수 지연
+      im.style.setProperty("--dx", Math.round(r(-60, 60)) + "px");
+      im.style.setProperty("--r0", r0.toFixed(0) + "deg");
+      im.style.setProperty("--r1", (r0 + r(-160, 160)).toFixed(0) + "deg");
+      box.appendChild(im);
+    }
+  })();
+
   /* ---- countdown ---- */
   var wasOpen = false;
   function tick() {
