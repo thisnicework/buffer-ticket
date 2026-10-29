@@ -12,6 +12,7 @@ const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "";
 const DB_PATH = process.env.DB_PATH || path.join(__dirname, "data", "tickets.db");
 const TRUST_PROXY = process.env.TRUST_PROXY === "1";
 const BOOK_RATE_MAX = Number(process.env.BOOK_RATE_MAX || 30); // IP당 10분 내 예매 시도 한도 (공용 와이파이를 고려해 넉넉히)
+const TICKET_PRICE = Number(process.env.TICKET_PRICE || 0); // 표시용 금액(원). 결제는 모의 처리라 실제 청구는 없음
 const CAP = 35; //회차당 온라인 예매석 (총 40석 중 유보석 5석 제외)
 const PUBLIC_DIR = path.join(__dirname, "public");
 
@@ -168,7 +169,7 @@ async function api(req, res, url) {
   const route = `${req.method} ${url.pathname}`;
 
   if (route === "GET /api/shows") {
-    return send(res, 200, { openAt: new Date(OPEN_AT).toISOString(), now: new Date().toISOString(), open: isOpen(), cap: CAP, shows: remainingByShow() });
+    return send(res, 200, { openAt: new Date(OPEN_AT).toISOString(), now: new Date().toISOString(), open: isOpen(), cap: CAP, price: TICKET_PRICE, shows: remainingByShow() });
   }
 
   if (route === "POST /api/book") {
@@ -230,7 +231,7 @@ async function api(req, res, url) {
 
 const TYPES = {
   ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8",
-  ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".webp": "image/webp", ".ico": "image/x-icon",
+  ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".webp": "image/webp", ".mp4": "video/mp4", ".ico": "image/x-icon",
 };
 
 function serveStatic(req, res, url) {

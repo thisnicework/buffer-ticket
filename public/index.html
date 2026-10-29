@@ -47,8 +47,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 
 /* hero */
 .hero{padding-top:20px;padding-bottom:0}
-.title{font-family:var(--f-display);font-weight:900;font-size:clamp(60px,17vw,176px);line-height:.86;letter-spacing:-.045em;display:flex;align-items:baseline;gap:.12em;flex-wrap:wrap}
-.title .ko{font-family:var(--f-body);font-weight:300;font-size:.34em;letter-spacing:0}
+.title{margin:0;line-height:0}
+.logo{display:block;width:min(100%,520px);height:auto}
 .sub{display:flex;flex-wrap:wrap;gap:6px 28px;margin-top:22px;font-family:var(--f-mono);font-size:13px}
 .tempo{position:relative;height:200px;margin-top:28px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-end;padding-inline:2px}
 .ln{position:relative;width:1px;background:var(--ink);height:var(--h)}
@@ -119,6 +119,18 @@ button{font:inherit;color:inherit;cursor:pointer}
 .err{color:var(--danger);font-size:13.5px;margin-top:12px;min-height:1.2em}
 .big-code{font-family:var(--f-mono);font-size:34px;font-weight:500;margin-top:14px;letter-spacing:-.02em}
 footer{padding-block:28px 40px;border-top:1px solid var(--ink);font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;color:var(--mute);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+/* poster / profile / teaser */
+.posters{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:18px}
+.posters img,.profiles img{display:block;width:100%;height:auto;background:var(--line)}
+.posters figure,.profiles figure{margin:0}
+.teaser{margin-top:22px;aspect-ratio:16/5;border:1px dashed var(--ring);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-family:var(--f-mono)}
+.teaser b{font-weight:500;letter-spacing:.1em;font-size:14px}
+.profiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-top:18px}
+.profiles .wide{grid-column:1/-1}
+@media (max-width:520px){.posters{grid-template-columns:1fr}.profiles{grid-template-columns:repeat(2,1fr)}}
+.paybox{margin-top:16px;border:1px solid var(--line);padding:14px 16px;font-size:14px;display:grid;gap:4px}
+.paybox b{font-family:var(--f-mono);font-size:22px;font-weight:500}
 </style>
 <style>html{color-scheme:light}@media (prefers-color-scheme:dark){html{color-scheme:dark}}body{margin:0}.sr{position:absolute;left:-9999px}</style>
 </head>
@@ -129,7 +141,7 @@ footer{padding-block:28px 40px;border-top:1px solid var(--ink);font-family:var(-
   <div class="bar"><b>BUFFER 버퍼</b><span>TICKET / 2026</span></div>
 
   <section class="zone hero" aria-labelledby="ttl">
-    <h1 class="title" id="ttl">BUFFER<span class="ko">버퍼</span></h1>
+    <h1 class="title" id="ttl"><span class="sr">BUFFER 버퍼</span><picture><source srcset="/img/logo-date-white.png" media="(prefers-color-scheme:dark)"><img class="logo" src="/img/logo-date-black.png" alt="" width="800" height="472"></picture></h1>
     <div class="sub"><span>2026.11.14 SAT — 11.15 SUN</span><span>총 4회차</span><span>자유석 · 1인 1매</span></div>
     <div class="tempo" id="tempo" aria-hidden="true"></div>
   </section>
@@ -148,6 +160,22 @@ footer{padding-block:28px 40px;border-top:1px solid var(--ink);font-family:var(-
   <section class="zone" aria-labelledby="sh">
     <div class="label" id="sh">회차 선택</div>
     <div class="shows" id="shows"></div>
+  </section>
+
+
+  <section class="zone" aria-labelledby="po">
+    <div class="label" id="po">공연 소개</div>
+    <div class="posters">
+      <figure><img src="/img/poster-a.jpg" alt="BUFFER 버퍼 포스터 A — 흑백 사각형 조각이 흩어진 이미지" loading="lazy" width="1000" height="1333"></figure>
+      <figure><img src="/img/poster-b.jpg" alt="BUFFER 버퍼 포스터 B — 2026.11.14–15, 3PM/7PM, Please wait at Space Padong" loading="lazy" width="1000" height="1333"></figure>
+    </div>
+    <p class="notice"><strong>BUFFER 버퍼</strong><br>Space Padong · 2026.11.14(토)–15(일) · 3PM / 7PM<br>Presented by Team Sfumato</p>
+    <div class="teaser" id="teaser" role="img" aria-label="티저 영상 준비 중"><span class="label">TEASER</span><b>준비 중 · COMING SOON</b></div>
+  </section>
+
+  <section class="zone" aria-labelledby="pf">
+    <div class="label" id="pf">프로필</div>
+    <div class="profiles" id="profiles"></div>
   </section>
 
   <section class="zone" id="mineZone" hidden aria-labelledby="mn">

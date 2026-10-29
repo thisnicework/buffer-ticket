@@ -1,7 +1,7 @@
 (function () {
   "use strict";
   var CAP = 35;
-  var state = { shows: [], openAt: 0, offset: 0, loaded: false, failed: false };
+  var state = { price: 0, shows: [], openAt: 0, offset: 0, loaded: false, failed: false };
   var mine = null; // {code, show, name, phone}
   var confirmCancel = false, cancelBusy = false, lookupErr = "", lookupBusy = false;
   var dlg = null, lastFocus = null;
@@ -41,6 +41,17 @@
     });
   })();
 
+  /* ---- profiles ---- */
+  (function () {
+    var box = $("profiles");
+    for (var i = 1; i <= 10; i++) {
+      var f = el("figure", i === 10 ? "wide" : ""), im = el("img");
+      im.src = "/img/profile-" + i + ".jpg"; im.alt = i === 10 ? "BUFFER 버퍼 퍼포머 단체 프로필" : "BUFFER 버퍼 퍼포머 프로필 " + i;
+      im.loading = "lazy"; im.width = i === 10 ? 1600 : 900; im.height = i === 10 ? 856 : 1125;
+      f.appendChild(im); box.appendChild(f);
+    }
+  })();
+
   /* ---- countdown ---- */
   var wasOpen = false;
   function tick() {
@@ -64,7 +75,7 @@
       var r = await fetch("/api/shows", { cache: "no-store" });
       if (!r.ok) throw new Error("bad status");
       var d = await r.json();
-      state.shows = d.shows; state.openAt = new Date(d.openAt).getTime(); state.offset = new Date(d.now).getTime() - Date.now();
+      state.shows = d.shows; state.price = d.price || 0; state.openAt = new Date(d.openAt).getTime(); state.offset = new Date(d.now).getTime() - Date.now();
       state.loaded = true; state.failed = false;
     } catch (e) { state.failed = true; }
     tick(); render();
@@ -165,7 +176,7 @@
 
   /* ---- dialog ---- */
   function openDialog(s) { lastFocus = document.activeElement; dlg = { show: s, step: 1, busy: false, error: "", code: "" }; renderDlg(); }
-  function closeDlg() { var done = dlg && dlg.step === 3; dlg = null; $("overlay").textContent = ""; if (lastFocus && lastFocus.focus && document.contains(lastFocus)) lastFocus.focus(); refresh(); }
+  function closeDlg() { dlg = null; $("overlay").textContent = ""; if (lastFocus && lastFocus.focus && document.contains(lastFocus)) lastFocus.focus(); refresh(); }
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && dlg && !dlg.busy) closeDlg(); });
 
   function renderDlg() {
@@ -204,19 +215,39 @@
         var name = nm.value.trim(), digits = ph.value.replace(/\D/g, "");
         if (!name) { err.textContent = "이름을 입력해주세요."; nm.focus(); return; }
         if (!/^01[016789]\d{7,8}$/.test(digits)) { err.textContent = "휴대전화 번호를 010-0000-0000 형식으로 입력해주세요."; ph.focus(); return; }
-        dlg.busy = true; dlg.error = ""; err.textContent = ""; go.disabled = true; back.disabled = true; go.textContent = "처리 중";
+        dlg.name = name; dlg.phone = digits; dlg.error = ""; dlg.step = 3; renderDlg();
+      });
+      if (dlg.name) nm.value = dlg.name; if (dlg.phone) ph.value = fmtPhone(dlg.phone);
+      box.appendChild(f); focusEl = nm;
+    } else if (dlg.step === 3) {
+      h.textContent = "결제"; box.appendChild(h); box.appendChild(which);
+      var pb = el("div", "paybox");
+      pb.appendChild(el("span", null, dlg.name + " · " + maskPhone(dlg.phone)));
+      pb.appendChild(el("span", null, "결제 금액"));
+      pb.appendChild(el("b", null, state.price ? state.price.toLocaleString("ko-KR") + "원" : "0원"));
+      box.appendChild(pb);
+      box.appendChild(el("p", null, "데모용 모의 결제입니다. 실제 결제나 청구는 이루어지지 않으며, 버튼을 누르면 예매가 확정됩니다."));
+      var err3 = el("div", "err", dlg.error); err3.setAttribute("role", "alert"); box.appendChild(err3);
+      var act4 = el("div", "actions");
+      var back3 = el("button", "btn", "이전"); back3.type = "button"; back3.disabled = dlg.busy;
+      back3.addEventListener("click", function () { dlg.step = 2; dlg.error = ""; renderDlg(); });
+      var pay = el("button", "btn solid", dlg.busy ? "처리 중" : "모의 결제하고 예매 확정"); pay.type = "button"; pay.disabled = dlg.busy;
+      pay.addEventListener("click", async function () {
+        if (dlg.busy) return;
+        dlg.busy = true; dlg.error = ""; pay.disabled = true; back3.disabled = true; pay.textContent = "처리 중";
         try {
-          var r = await post("/api/book", { show: s.id, name: name, phone: digits, consent: true });
-          mine = { code: r.code, show: s.id, name: name, phone: digits }; saveMine();
-          dlg.busy = false; dlg.step = 3; dlg.code = r.code; say("예매가 완료되었습니다."); renderDlg();
+          var r = await post("/api/book", { show: s.id, name: dlg.name, phone: dlg.phone, consent: true });
+          mine = { code: r.code, show: s.id, name: dlg.name, phone: dlg.phone }; saveMine();
+          dlg.busy = false; dlg.step = 4; dlg.code = r.code; say("예매가 완료되었습니다."); renderDlg();
         } catch (ex) {
           dlg.busy = false; dlg.error = ex.status ? ex.message : "연결에 실패했습니다. 잠시 후 다시 시도해주세요."; renderDlg();
         }
       });
-      box.appendChild(f); focusEl = nm;
+      act4.appendChild(back3); act4.appendChild(pay); box.appendChild(act4); focusEl = pay;
     } else {
       h.textContent = "예매가 완료되었습니다"; box.appendChild(h); box.appendChild(which);
       box.appendChild(el("div", "big-code", dlg.code));
+      box.appendChild(el("p", null, dlg.name + " · " + maskPhone(dlg.phone)));
       box.appendChild(el("p", null, "예매번호를 꼭 기억해주세요. 취소나 확인 시 예매번호와 전화번호가 필요합니다. 자유석이므로 입장 순서대로 착석합니다."));
       var act3 = el("div", "actions"); var done = el("button", "btn solid", "확인"); done.type = "button"; done.addEventListener("click", closeDlg);
       act3.appendChild(done); box.appendChild(act3); focusEl = done;
