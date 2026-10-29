@@ -224,9 +224,9 @@
       var pb = el("div", "paybox");
       pb.appendChild(el("span", null, dlg.name + " · " + maskPhone(dlg.phone)));
       pb.appendChild(el("span", null, "결제 금액"));
-      pb.appendChild(el("b", null, state.price ? state.price.toLocaleString("ko-KR") + "원" : "0원"));
+      pb.appendChild(el("b", null, state.price ? state.price.toLocaleString("ko-KR") + "원" : "무료"));
       box.appendChild(pb);
-      box.appendChild(el("p", null, "데모용 모의 결제입니다. 실제 결제나 청구는 이루어지지 않으며, 버튼을 누르면 예매가 확정됩니다."));
+      box.appendChild(el("p", null, (state.price ? "데모용 모의 결제입니다. 실제 결제나 청구는 이루어지지 않으며, 버튼을 누르면 예매가 확정됩니다." : "무료 공연입니다. 버튼을 누르면 예매가 확정됩니다.")));
       var err3 = el("div", "err", dlg.error); err3.setAttribute("role", "alert"); box.appendChild(err3);
       var act4 = el("div", "actions");
       var back3 = el("button", "btn", "이전"); back3.type = "button"; back3.disabled = dlg.busy;

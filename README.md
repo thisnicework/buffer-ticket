@@ -48,7 +48,7 @@ OPEN_AT=2020-01-01T00:00:00Z TICKET_PRICE=15000 npm start
 | `ADMIN_TOKEN` | (없음) | 비우면 관리자 기능이 꺼집니다 |
 | `DB_PATH` | ./data/tickets.db | DB 위치 |
 | `BOOK_RATE_MAX` | 30 | IP당 10분간 예매 시도 한도 |
-| `TICKET_PRICE` | 0 | 모의 결제 화면에 표시되는 금액(원). 실제 청구 없음 |
+| `TICKET_PRICE` | 0 | 결제 화면에 표시되는 금액(원). 0이면 "무료"로 표시. 실제 청구 없음 |
 | `TRUST_PROXY` | 0 | 프록시 뒤에서 실행하면 1 (`X-Forwarded-For` 사용) |
 
 오픈 전에 흐름을 점검하려면 `OPEN_AT=2020-01-01T00:00:00Z`로 띄우고, 점검 뒤 `data/`를 지우세요.
