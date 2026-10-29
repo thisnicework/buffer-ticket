@@ -41,16 +41,48 @@
     });
   })();
 
-  /* ---- profiles ---- */
+  /* ---- gallery + lightbox ---- */
+  var PROFILE = function (i) { return "/assets/profile/Buffer_Profile_v1027-" + i + ".jpg"; };
+  var POSTER = "/assets/design/POSTER/BUFFER%20Poster_";
+  var GALLERY = [
+    { src: POSTER + "B.png", alt: "BUFFER 버퍼 포스터 B" },
+    { src: POSTER + "A.png", alt: "BUFFER 버퍼 포스터 A" }
+  ];
+  var lb = null;
+  function zoomBtn(src, alt, w, h, idx) {
+    var b = el("button", "zoom"); b.type = "button"; b.setAttribute("aria-label", alt + " 크게 보기");
+    var im = el("img"); im.src = src; im.alt = alt; im.loading = "lazy"; im.decoding = "async"; im.width = w; im.height = h;
+    b.appendChild(im); b.addEventListener("click", function () { openLb(idx); });
+    return b;
+  }
   (function () {
     var box = $("profiles");
-    for (var i = 1; i <= 10; i++) {
-      var f = el("figure", i === 10 ? "wide" : ""), im = el("img");
-      im.src = "/assets/profile/Buffer_Profile_v1027-" + i + ".jpg"; im.alt = i === 10 ? "BUFFER 버퍼 퍼포머 단체 프로필" : "BUFFER 버퍼 퍼포머 프로필 " + i;
-      im.loading = "lazy"; im.width = i === 10 ? 14408 : 4800; im.height = i === 10 ? 7707 : 6000;
-      f.appendChild(im); box.appendChild(f);
+    for (var i = 1; i <= 9; i++) {
+      GALLERY.push({ src: PROFILE(i), alt: "BUFFER 버퍼 퍼포머 프로필 " + i });
+      box.appendChild(el("figure")).appendChild(zoomBtn(PROFILE(i), "BUFFER 버퍼 퍼포머 프로필 " + i, 4800, 6000, GALLERY.length - 1));
     }
+    GALLERY.push({ src: PROFILE(10), alt: "BUFFER 버퍼 퍼포머 단체 프로필" });
+    var g = $("group"); g.appendChild(zoomBtn(PROFILE(10), "BUFFER 버퍼 퍼포머 단체 프로필", 14408, 7707, GALLERY.length - 1));
+    g.appendChild(el("figcaption", "cap", "PERFORMERS · 9"));
+    document.querySelectorAll("[data-zoom]").forEach(function (b) { b.addEventListener("click", function () { openLb(Number(b.getAttribute("data-zoom"))); }); });
   })();
+  function openLb(i) { lb = { i: i, last: document.activeElement }; renderLb(); }
+  function closeLb() { var l = lb; lb = null; $("lightbox").textContent = ""; if (l && l.last && l.last.focus) l.last.focus(); }
+  function stepLb(d) { lb.i = (lb.i + d + GALLERY.length) % GALLERY.length; renderLb(); }
+  function renderLb() {
+    var root = $("lightbox"); root.textContent = ""; if (!lb) return;
+    var g = GALLERY[lb.i], v = el("div", "lb"); v.setAttribute("role", "dialog"); v.setAttribute("aria-modal", "true"); v.setAttribute("aria-label", g.alt);
+    var im = el("img"); im.src = g.src; im.alt = g.alt;
+    function btn(c, t, l, f) { var b = el("button", c, t); b.type = "button"; b.setAttribute("aria-label", l); b.addEventListener("click", function (e) { e.stopPropagation(); f(); }); return b; }
+    var x = btn("x", "✕", "닫기", closeLb);
+    v.appendChild(im); v.appendChild(x); v.appendChild(btn("pv", "←", "이전", function () { stepLb(-1); })); v.appendChild(btn("nx", "→", "다음", function () { stepLb(1); }));
+    v.appendChild(el("div", "n", (lb.i + 1) + " / " + GALLERY.length));
+    v.addEventListener("click", closeLb); root.appendChild(v); x.focus();
+  }
+  document.addEventListener("keydown", function (e) {
+    if (!lb) return;
+    if (e.key === "Escape") closeLb(); else if (e.key === "ArrowLeft") stepLb(-1); else if (e.key === "ArrowRight") stepLb(1);
+  });
 
   /* ---- countdown ---- */
   var wasOpen = false;
